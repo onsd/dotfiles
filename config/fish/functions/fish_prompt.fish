@@ -1,42 +1,84 @@
-function fish_prompt
-  # Cache exit status
-  set -l last_status $status
+function fish_prompt --description 'Write out the prompt'
+    set -l last_pipestatus $pipestatus
 
-  # Just calculate these once, to save a few cycles when displaying the prompt
-  if not set -q __fish_prompt_hostname
-    set -g __fish_prompt_hostname (hostname|cut -d . -f 1)
-  end
-  if not set -q __fish_prompt_char
-    switch (id -u)
-      case 0
-	set -g __fish_prompt_char '#'
-      case '*'
-	set -g __fish_prompt_char '>'
+    if not set -q __fish_git_prompt_show_informative_status
+        set -g __fish_git_prompt_show_informative_status 1
     end
-  end
+    if not set -q __fish_git_prompt_hide_untrackedfiles
+        set -g __fish_git_prompt_hide_untrackedfiles 1
+    end
+    if not set -q __fish_git_prompt_color_branch
+        set -g __fish_git_prompt_color_branch magenta --bold
+    end
+    if not set -q __fish_git_prompt_showupstream
+        set -g __fish_git_prompt_showupstream "informative"
+    end
+    if not set -q __fish_git_prompt_char_upstream_ahead
+        set -g __fish_git_prompt_char_upstream_ahead "↑"
+    end
+    if not set -q __fish_git_prompt_char_upstream_behind
+        set -g __fish_git_prompt_char_upstream_behind "↓"
+    end
+    if not set -q __fish_git_prompt_char_upstream_prefix
+        set -g __fish_git_prompt_char_upstream_prefix ""
+    end
+    if not set -q __fish_git_prompt_char_stagedstate
+        set -g __fish_git_prompt_char_stagedstate "●"
+    end
+    if not set -q __fish_git_prompt_char_dirtystate
+        set -g __fish_git_prompt_char_dirtystate "✚"
+    end
+    if not set -q __fish_git_prompt_char_untrackedfiles
+        set -g __fish_git_prompt_char_untrackedfiles "…"
+    end
+    if not set -q __fish_git_prompt_char_invalidstate
+        set -g __fish_git_prompt_char_invalidstate "✖"
+    end
+    if not set -q __fish_git_prompt_char_cleanstate
+        set -g __fish_git_prompt_char_cleanstate "✔"
+    end
+    if not set -q __fish_git_prompt_color_dirtystate
+        set -g __fish_git_prompt_color_dirtystate blue
+    end
+    if not set -q __fish_git_prompt_color_stagedstate
+        set -g __fish_git_prompt_color_stagedstate yellow
+    end
+    if not set -q __fish_git_prompt_color_invalidstate
+        set -g __fish_git_prompt_color_invalidstate red
+    end
+    if not set -q __fish_git_prompt_color_untrackedfiles
+        set -g __fish_git_prompt_color_untrackedfiles $fish_color_normal
+    end
+    if not set -q __fish_git_prompt_color_cleanstate
+        set -g __fish_git_prompt_color_cleanstate green --bold
+    end
 
-  # Setup colors
-  set -l normal (set_color normal)
-  set -l red (set_color red)
-  set -l cyan (set_color cyan)
-  set -l white (set_color white)
+    set -l color_cwd
+    set -l prefix
+    set -l suffix
+    switch "$USER"
+        case root toor
+            if set -q fish_color_cwd_root
+                set color_cwd $fish_color_cwd_root
+            else
+                set color_cwd $fish_color_cwd
+            end
+            set suffix '#'
+        case '*'
+            set color_cwd $fish_color_cwd
+            set suffix '$'
+    end
 
-  # Configure __fish_git_prompt
-  set -g __fish_git_prompt_char_stateseparator ' '
-  set -g __fish_git_prompt_color white
-  set -g __fish_git_prompt_color_flags red
-  set -g __fish_git_prompt_color_prefix cyan
-  set -g __fish_git_prompt_color_suffix cyan
-  set -g __fish_git_prompt_showdirtystate true
-  set -g __fish_git_prompt_showuntrackedfiles true
-  set -g __fish_git_prompt_showstashstate true
-  set -g __fish_git_prompt_show_informative_status true
-  
-  # Line 1
-  echo -n $cyan'┌['$white$USER$cyan'@'$white$__fish_prompt_hostname$cyan']'$white'-'$cyan'('$white(prompt_pwd)$cyan')'
-  __fish_git_prompt "-[git://%s]-"
-  echo
+    # PWD
+    set_color $color_cwd
+    echo -n (prompt_pwd)
+    set_color normal
 
-  # Line 2
-  echo -n $cyan'└'$__fish_prompt_char $normal
+    printf '%s ' (fish_vcs_prompt)
+
+    set -l pipestatus_string (__fish_print_pipestatus "[" "] " "|" (set_color $fish_color_status) (set_color --bold $fish_color_status) $last_pipestatus)
+    echo -n $pipestatus_string
+    set_color normal
+
+    echo -n "$suffix "
 end
