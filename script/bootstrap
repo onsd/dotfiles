@@ -1,3 +1,6 @@
 echo ' + Prepare Dotfiles'
+echo ' + cp RCs/zshrc to ~/.zshrc'
+mv ~/.zshrc ~/.zshrc.bak
+cp RCs/zshrc ~/.zshrc
 
 echo ' - Done.'
