@@ -1,12 +1,17 @@
+#
+# Executes commands at the start of an interactive session.
+#
+# Authors:
+#   Sorin Ionescu <sorin.ionescu@gmail.com>
+#
+
 # Source Prezto.
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
-eval "$(direnv hook zsh)"
-
 
 # Customize to your needs...
-# change theme
+
 autoload -Uz promptinit
 promptinit
 prompt giddie
@@ -45,9 +50,12 @@ alias -g yamlb="-o yaml | bat -l yaml"
 # PATHes
 export GOPATH=/User/taka/Workspace
 export PATH="$HOME/.wantedly/bin:$PATH"
+export PATH="/usr/local/bin:$PATH"
+export PATH="$HOME/.anyenv/bin/:$PATH"
 
 # ENVs
 export EDITOR="vim"
 
 # anyenv
 eval "$(anyenv init -)"
+eval "$(direnv hook zsh)"

@@ -1,6 +1,21 @@
+#! /bin/bash
 echo ' + Prepare Dotfiles'
-echo ' + cp RCs/zshrc to ~/.zshrc'
-mv ~/.zshrc ~/.zshrc.bak
-cp RCs/zshrc ~/.zshrc
+# 未定義な変数があったら途中で終了する
+set -u
+
+# 今のディレクトリ
+# dotfilesディレクトリに移動する
+BASEDIR=$(dirname $0)
+cd $BASEDIR && cd ..
+
+# ドットから始まり2文字以上の名前のファイルに対して
+for f in RCs/.??*; do
+    [ "$f" = ".git" ] && continue
+    [ "$f" = ".gitconfig.local.template" ] && continue
+    [ "$f" = ".gitmodules" ] && continue
+
+    # シンボリックリンクを貼る
+    ln -snfv $(pwd)/$f ~
+done
 
 echo ' - Done.'
