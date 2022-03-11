@@ -14,7 +14,7 @@ fi
 
 autoload -Uz promptinit
 promptinit
-prompt giddie
+prompt steeef
 
 # functions
 #------------------------------------------------------------------------------------------------------------
@@ -46,6 +46,7 @@ alias gpsf='git push --force'
 alias gpl='git pull'
 alias gcm='git checkout master || git checkout main'
 alias -g yamlb="-o yaml | bat -l yaml"
+alias show-header-server='python3 $(ghq root)/github.com/onsd/dotfiles/script/simple-http-server.py'
 
 # PATHes
 export GOPATH=/User/taka/Workspace
@@ -56,6 +57,7 @@ export PATH="$HOME/.anyenv/bin/:$PATH"
 # ENVs
 export EDITOR="vim"
 
-# anyenv
+# other commands
 eval "$(anyenv init -)"
 eval "$(direnv hook zsh)"
+eval "$(/opt/homebrew/bin/brew shellenv)"
