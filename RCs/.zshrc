@@ -50,9 +50,7 @@ alias show-header-server='python3 $(ghq root)/github.com/onsd/dotfiles/script/si
 
 # PATHes
 export GOPATH=/User/taka/Workspace
-export PATH="$HOME/.wantedly/bin:$PATH"
-export PATH="/usr/local/bin:$PATH"
-export PATH="$HOME/.anyenv/bin/:$PATH"
+
 
 # ENVs
 export EDITOR="vim"
@@ -60,4 +58,4 @@ export EDITOR="vim"
 # other commands
 eval "$(anyenv init -)"
 eval "$(direnv hook zsh)"
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# eval "$(/opt/homebrew/bin/brew shellenv)"
