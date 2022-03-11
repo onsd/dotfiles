@@ -8,6 +8,7 @@ set -u
 BASEDIR=$(dirname $0)
 cd $BASEDIR && cd ..
 
+ln -snfv $(pwd)/prezto ~/.zprezto
 # ドットから始まり2文字以上の名前のファイルに対して
 for f in RCs/.??*; do
     [ "$f" = ".git" ] && continue
