@@ -33,9 +33,12 @@ function select-history() {
 }
 
 zle -N ghq-fzf
-bindkey '^g' ghq-fzf
 zle -N select-history
+###### bindkeys ######
+bindkey '^g' ghq-fzf
 bindkey '^r' select-history
+bindkey '^h' backward-word
+bindkey '^l' forward-word
 
 ###### local settings ######
 # aliases
@@ -45,6 +48,7 @@ alias gps='git push'
 alias gpsf='git push --force'
 alias gpl='git pull'
 alias gcm='git checkout master || git checkout main'
+alias gco='git commit'
 alias -g yamlb="-o yaml | bat -l yaml"
 alias show-header-server='python3 $(ghq root)/github.com/onsd/dotfiles/script/simple-http-server.py'
 
