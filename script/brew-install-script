@@ -1,0 +1,8 @@
+#! /bin/bash
+
+packages=(anyenv direnv fzf)
+
+for package in "${packages[@]}"
+do
+	brew install $package
+done
