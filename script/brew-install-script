@@ -1,9 +1,0 @@
-#! /bin/bash
-
-packages=(anyenv direnv fzf jq visual-studio-code slack spotify raycast)
-
-for package in "${packages[@]}"
-do
-	echo "install ${package}"
-	brew install $package
-done
