@@ -55,11 +55,9 @@ alias show-header-server='python3 $(ghq root)/github.com/onsd/dotfiles/script/si
 
 # PATHes
 export GOPATH=/User/taka/Workspace
+export PATH=/opt/homebrew/bin:$PATH
 export PATH=$HOME/.wantedly/bin:$PATH
 export PATH=$HOME/.anyenv/bin:$PATH
-
-
-
 
 # ENVs
 export EDITOR="vim"
