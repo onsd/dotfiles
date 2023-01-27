@@ -59,7 +59,7 @@ export PATH=/opt/homebrew/bin:$PATH
 export PATH=$HOME/.wantedly/bin:$PATH
 export PATH=$HOME/.anyenv/bin:$PATH
 
-if [ -e "$HOME/.deno"]
+if [ -e "$HOME/.deno" ]
 then
   export DENO_INSTALL="$HOME/.deno"
   export PATH="$DENO_INSTALL/bin:$PATH"
