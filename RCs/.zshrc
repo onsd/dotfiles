@@ -59,10 +59,34 @@ export PATH=/opt/homebrew/bin:$PATH
 export PATH=$HOME/.wantedly/bin:$PATH
 export PATH=$HOME/.anyenv/bin:$PATH
 
+if [ -e "$HOME/.deno"]
+then
+  export DENO_INSTALL="$HOME/.deno"
+  export PATH="$DENO_INSTALL/bin:$PATH"
+fi
+
 # ENVs
 export EDITOR="vim"
 
 # other commands
 eval "$(anyenv init -)"
 eval "$(direnv hook zsh)"
-eval "$(/opt/homebrew/bin/brew shellenv)"
+
+if [ -e "$HOME/.anyenv" ]
+then
+    export ANYENV_ROOT="$HOME/.anyenv"
+    export PATH="$ANYENV_ROOT/bin:$PATH"
+    if command -v anyenv 1>/dev/null 2>&1
+    then
+        eval "$(anyenv init -)"
+    fi
+fi
+
+if [ -e "$HOME/google-cloud-sdk" ]
+  then 
+  # The next line updates PATH for the Google Cloud SDK.
+  if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
+
+  # The next line enables shell command completion for gcloud.
+  if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
+fi
