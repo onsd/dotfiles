@@ -1,21 +1,3 @@
-#
-# Executes commands at the start of an interactive session.
-#
-# Authors:
-#   Sorin Ionescu <sorin.ionescu@gmail.com>
-#
-
-# Source Prezto.
-if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
-  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
-fi
-
-# Customize to your needs...
-
-autoload -Uz promptinit
-promptinit
-prompt steeef
-
 # functions
 #------------------------------------------------------------------------------------------------------------
 function ghq-fzf() {
@@ -48,15 +30,19 @@ alias gps='git push'
 alias gpsf='git push --force'
 alias gpl='git pull'
 alias gcm='git checkout master || git checkout main'
+alias gcd='git checkout develop'
 alias gco='git commit'
 alias grs='git reset --soft HEAD\^'
 alias -g yamlb="-o yaml | bat -l yaml"
 alias show-header-server='python3 $(ghq root)/github.com/onsd/dotfiles/script/simple-http-server.py'
+alias mkgif='ffmpeg -filter_complex "[0:v] fps=10,scale=640:-1,split [a][b];[a] palettegen [p];[b][p] paletteuse" -i '
+alias notify='osascript -e '\'' display notification "タスクが終了しました" with title "Terminal" sound name "Glass.aiff" '\'''
 
 # PATHes
-export GOPATH=/User/taka/Workspace
+export GOPATH=~/Workspace
+export GOBIN=$GOPATH/bin
 export PATH=/opt/homebrew/bin:$PATH
-export PATH=$HOME/.wantedly/bin:$PATH
+export PATH=$GOBIN:$PATH
 export PATH=$HOME/.anyenv/bin:$PATH
 
 if [ -e "$HOME/.deno" ]
@@ -90,3 +76,6 @@ if [ -e "$HOME/google-cloud-sdk" ]
   # The next line enables shell command completion for gcloud.
   if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
 fi
+
+eval "$(starship init zsh)"
+
