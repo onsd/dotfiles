@@ -1,7 +1,7 @@
 # functions
 #------------------------------------------------------------------------------------------------------------
 function ghq-fzf() {
-  local src=$(ghq list | fzf --preview "ls -laTp $(ghq root)/{} | tail -n+4 | awk '{print \$9\"/\"\$6\"/\"\$7 \" \" \$10}'")
+    local src=$(find $(ghq root)/github.com -d 2 -maxdepth 2 | grep -v DS_Store | sed -e "s#$(ghq root)/##g" | fzf)
     if [ -n "$src" ]; then
       BUFFER="cd $(ghq root)/$src"
       zle accept-line
@@ -21,8 +21,22 @@ bindkey '^g' ghq-fzf
 bindkey '^r' select-history
 bindkey '^h' backward-word
 bindkey '^l' forward-word
+bindkey '^a' beginning-of-line
+bindkey '^e' end-of-line
 
 ###### local settings ######
+HISTFILE=~/.zsh_history      # ヒストリファイルを指定
+HISTSIZE=10000               # ヒストリに保存するコマンド数
+SAVEHIST=10000               # ヒストリファイルに保存するコマンド数
+setopt hist_ignore_all_dups  # 重複するコマンド行は古い方を削除
+setopt hist_ignore_dups      # 直前と同じコマンドラインはヒストリに追加しない
+setopt share_history         # コマンド履歴ファイルを共有する
+setopt append_history        # 履歴を追加 (毎回 .zsh_history を作るのではなく)
+setopt inc_append_history    # 履歴をインクリメンタルに追加
+setopt hist_no_store         # historyコマンドは履歴に登録しない
+setopt hist_reduce_blanks    # 余分な空白は詰めて記録
+
+
 # aliases
 alias gc='git checkout'
 alias gs='git status'
@@ -31,6 +45,7 @@ alias gpsf='git push --force'
 alias gpl='git pull'
 alias gcm='git checkout master || git checkout main'
 alias gcd='git checkout develop'
+alias gcs='git checkout staging'
 alias gco='git commit'
 alias grs='git reset --soft HEAD\^'
 alias -g yamlb="-o yaml | bat -l yaml"
@@ -41,9 +56,9 @@ alias notify='osascript -e '\'' display notification "タスクが終了しま�
 # PATHes
 export GOPATH=~/Workspace
 export GOBIN=$GOPATH/bin
-export PATH=/opt/homebrew/bin:$PATH
 export PATH=$GOBIN:$PATH
 export PATH=$HOME/.anyenv/bin:$PATH
+export PATH=/opt/homebrew/bin:$PATH
 
 if [ -e "$HOME/.deno" ]
 then
@@ -75,6 +90,11 @@ if [ -e "$HOME/google-cloud-sdk" ]
 
   # The next line enables shell command completion for gcloud.
   if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
+fi
+
+if [ -e "$HOME/.zsh/zsh-autosuggestions" ]
+then
+    source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 fi
 
 eval "$(starship init zsh)"
