@@ -36,6 +36,8 @@ setopt inc_append_history    # 履歴をインクリメンタルに追加
 setopt hist_no_store         # historyコマンドは履歴に登録しない
 setopt hist_reduce_blanks    # 余分な空白は詰めて記録
 
+# Add this line to treat '/' as a word boundary
+WORDCHARS=${WORDCHARS//\//}
 
 # aliases
 alias gc='git checkout'
@@ -68,6 +70,7 @@ fi
 
 # ENVs
 export EDITOR="vim"
+export GOPRIVATE=github.com/LayerXcom
 
 # other commands
 eval "$(anyenv init -)"
@@ -84,7 +87,7 @@ then
 fi
 
 if [ -e "$HOME/google-cloud-sdk" ]
-  then 
+  then
   # The next line updates PATH for the Google Cloud SDK.
   if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
 
@@ -99,3 +102,7 @@ fi
 
 eval "$(starship init zsh)"
 
+
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+export PATH="/Users/takamichi.omori/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
