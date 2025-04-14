@@ -11,4 +11,4 @@
 # Documentation:
 # @raycast.author onsd
 
-open "obsidian://advanced-uri?vault=vault&daily=true"
+open "obsidian://advanced-uri?vault=obsidian&daily=true"
