@@ -1,0 +1,4 @@
+interface:
+  display_name: "GitHub Ralph Loop"
+  short_description: "gh で CI と review thread を観測し修正ループを回す"
+  default_prompt: "Use $gh-ralph-loop to wait for the current PR checks, inspect unresolved review threads, and iterate on fixes until the PR is clean."
