@@ -14,6 +14,7 @@ brew "kind"
 brew "the_silver_searcher"
 
 cask "discord"
+cask "hammerspoon"
 cask "iterm2"
 cask "raycast"
 cask "slack"
