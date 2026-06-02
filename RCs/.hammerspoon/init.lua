@@ -1,6 +1,9 @@
 -- AppGrid 互換のグリッド操作 + Rectangle 相当の分割配置 (Hammerspoon)
 -- これ一つで AppGrid / Rectangle の両方を置き換える。
 
+-- ターミナルから `hs -c '...'` で状態確認できるようにする
+require("hs.ipc")
+
 -- ===== グリッド設定 =====
 -- '横マス数 x 縦マス数'。マスを増やすほど 1 コマの移動/伸縮が細かくなる。
 hs.grid.setGrid('4x2')
@@ -9,6 +12,29 @@ hs.window.animationDuration = 0   -- アニメ無しでキビキビ
 
 local mash  = {"ctrl", "cmd"}          -- ⌃⌘  : AppGrid 系（グリッド操作）
 local mash2 = {"ctrl", "alt", "cmd"}   -- ⌃⌥⌘ : Rectangle 系（分割配置）
+
+-- ===== Electron (Chromium) アプリ対策 =====
+-- Slack / VS Code / Discord 等は既定でウィンドウを AX (アクセシビリティ API) に
+-- 公開しないため、hs.window がウィンドウを掴めず操作できない。
+-- AXManualAccessibility を明示的に ON にして AX ツリーを公開させる。
+local function enableAX(app)
+  if not app then return end
+  local ax = hs.axuielement.applicationElement(app)
+  if ax then ax:setAttributeValue("AXManualAccessibility", true) end
+end
+
+-- 起動済みアプリすべてに適用（対象を絞らず全アプリに撒いておけば取りこぼさない）
+for _, app in ipairs(hs.application.runningApplications()) do
+  enableAX(app)
+end
+
+-- 後から起動 / フォーカスされたアプリにも自動適用
+hs.application.watcher.new(function(_, event, app)
+  if event == hs.application.watcher.launched
+     or event == hs.application.watcher.activated then
+    enableAX(app)
+  end
+end):start()
 
 -- フォーカスウィンドウを安全に取得（無ければ何もしない / AppGrid のクラッシュ対策）
 local function withWin(fn)
