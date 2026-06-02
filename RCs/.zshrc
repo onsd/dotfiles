@@ -9,15 +9,43 @@ function ghq-fzf() {
     zle -R -c
 }
 
+function git-branch-fzf() {
+    local selected=$(git branch | while read line; do
+        if [[ "$line" == \+* ]]; then
+            branch=$(echo "$line" | sed 's/^[+ ]*//')
+            worktree_path=$(git worktree list | grep "\[$branch\]" | awk '{print $1}')
+            echo "$branch (worktree: $worktree_path)"
+        elif [[ "$line" == \** ]]; then
+            echo "$line" | sed 's/^[* ]*//'
+        else
+            echo "$line" | sed 's/^ *//'
+        fi
+    done | fzf)
+
+    if [ -n "$selected" ]; then
+        if [[ "$selected" == *"(worktree:"* ]]; then
+            worktree_path=$(echo "$selected" | sed 's/.*worktree: \(.*\))/\1/')
+            BUFFER="cd $worktree_path"
+        else
+            BUFFER="git switch $selected"
+        fi
+        zle accept-line
+    fi
+    zle -R -c
+}
+
 function select-history() {
     BUFFER=$(history -n -r 1 | fzf --no-sort +m --query "$LBUFFER" --prompt="History > ")
     CURSOR=$#BUFFER
 }
 
 zle -N ghq-fzf
+zle -N git-branch-fzf
 zle -N select-history
+
 ###### bindkeys ######
 bindkey '^g' ghq-fzf
+bindkey '^b' git-branch-fzf
 bindkey '^r' select-history
 bindkey '^h' backward-word
 bindkey '^l' forward-word
@@ -72,13 +100,13 @@ export EDITOR="vim"
 export GOPRIVATE=github.com/LayerXcom
 
 # other commands
-eval "$(anyenv init -)"
+# eval "$(anyenv init -)"
 eval "$(direnv hook zsh)"
 
-if [ -e "$HOME/.local/bin/mise" ]
-then
-  eval "$(~/.local/bin/mise activate zsh)"
-fi
+# if [ -e "$HOME/.local/bin/mise" ]
+# then
+#   eval "$(~/.local/bin/mise activate zsh)"
+# fi
 
 
 if [ -e "$HOME/google-cloud-sdk" ]
@@ -90,6 +118,7 @@ if [ -e "$HOME/google-cloud-sdk" ]
   if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
 fi
 
+# git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
 if [ -e "$HOME/.zsh/zsh-autosuggestions" ]
 then
     source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -97,10 +126,6 @@ fi
 
 eval "$(starship init zsh)"
 
-
-### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-export PATH="/Users/takamichi.omori/.rd/bin:$PATH"
-### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
 
 # pnpm
 export PNPM_HOME="/Users/takamichi.omori/Library/pnpm"
@@ -110,17 +135,25 @@ case ":$PATH:" in
 esac
 # pnpm end
 
-eval "$(devbox global shellenv)"
 
 # bun completions
 [ -s "/Users/takamichi.omori/.bun/_bun" ] && source "/Users/takamichi.omori/.bun/_bun"
 
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
 export PATH="$HOME/.local/bin:$PATH"
 
+# aqua
 export AQUA_GLOBAL_CONFIG="/Users/takamichi.omori/Workspace/github.com/LayerXcom/layerone/go/cli/global-aqua/global-aqua.yaml"
-
 export PATH="$(aqua root-dir)/bin:$PATH"
+
+[[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
+
+# Bakuraku開発環境設定
+source ~/.zshrc.bakuraku
+
+export AQUA_GLOBAL_CONFIG="/Users/takamichi.omori/.config/aquaproj-aqua/aqua.yaml"
+
+export NPM_CONFIG_PREFIX="${XDG_DATA_HOME:-$HOME/.local/share}/npm-global"
+
+export PATH=$NPM_CONFIG_PREFIX/bin:$PATH
+export PATH="/usr/local/opt/mysql-client/bin:$PATH"
+export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
