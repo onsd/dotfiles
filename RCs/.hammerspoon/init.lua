@@ -105,6 +105,9 @@ hs.hotkey.bind(mash2, "Return", withWin(function(w) w:maximize() end))
 -- 別ディスプレイへ移動
 hs.hotkey.bind(mash2, "n", withWin(function(w) w:moveToScreen(w:screen():next()) end))
 
+-- 外部ディスプレイ接続時の解像度・配置 (⌃⌘D で手動再適用)
+displayLayout = require("display")
+
 -- 設定リロード
 hs.hotkey.bind(mash, "r", hs.reload)
 hs.alert.show("Hammerspoon: AppGrid + Rectangle 互換設定をロード")
