@@ -6,7 +6,7 @@ require("hs.ipc")
 
 -- ===== グリッド設定 =====
 -- '横マス数 x 縦マス数'。マスを増やすほど 1 コマの移動/伸縮が細かくなる。
-hs.grid.setGrid('4x2')
+hs.grid.setGrid('6x2')
 hs.grid.setMargins({0, 0})
 hs.window.animationDuration = 0   -- アニメ無しでキビキビ
 
@@ -107,6 +107,9 @@ hs.hotkey.bind(mash2, "n", withWin(function(w) w:moveToScreen(w:screen():next())
 
 -- 外部ディスプレイ接続時の解像度・配置 (⌃⌘D で手動再適用)
 displayLayout = require("display")
+
+-- 外部ディスプレイの明るさ (⌘ + 照度キー)
+brightness = require("brightness")
 
 -- 設定リロード
 hs.hotkey.bind(mash, "r", hs.reload)

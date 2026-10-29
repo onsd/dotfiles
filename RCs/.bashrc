@@ -12,3 +12,4 @@ export PATH="/Users/takamichi.omori/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
 
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path bash)"
+. "$HOME/.cargo/env"
