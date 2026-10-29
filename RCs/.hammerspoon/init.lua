@@ -108,6 +108,9 @@ hs.hotkey.bind(mash2, "n", withWin(function(w) w:moveToScreen(w:screen():next())
 -- 外部ディスプレイ接続時の解像度・配置 (⌃⌘D で手動再適用)
 displayLayout = require("display")
 
+-- 外部ディスプレイの明るさ (⌘ + 照度キー)
+brightness = require("brightness")
+
 -- 設定リロード
 hs.hotkey.bind(mash, "r", hs.reload)
 hs.alert.show("Hammerspoon: AppGrid + Rectangle 互換設定をロード")
