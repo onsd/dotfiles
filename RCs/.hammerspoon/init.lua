@@ -6,7 +6,7 @@ require("hs.ipc")
 
 -- ===== グリッド設定 =====
 -- '横マス数 x 縦マス数'。マスを増やすほど 1 コマの移動/伸縮が細かくなる。
-hs.grid.setGrid('4x2')
+hs.grid.setGrid('6x2')
 hs.grid.setMargins({0, 0})
 hs.window.animationDuration = 0   -- アニメ無しでキビキビ
 

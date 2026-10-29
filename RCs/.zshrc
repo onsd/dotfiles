@@ -1,7 +1,7 @@
 # functions
 #------------------------------------------------------------------------------------------------------------
 function ghq-fzf() {
-    local src=$(find $(ghq root)/github.com -d 2 -maxdepth 2 | grep -v DS_Store | sed -e "s#$(ghq root)/##g" | fzf)
+    local src=$(find $(ghq root) -d 3 -maxdepth 3 | grep -v DS_Store | sed -e "s#$(ghq root)/##g" | fzf)
     if [ -n "$src" ]; then
       BUFFER="cd $(ghq root)/$src"
       zle accept-line
@@ -70,9 +70,26 @@ WORDCHARS=${WORDCHARS//\//}
 # aliases
 alias gc='git checkout'
 alias gs='git status'
-alias gps='git push'
-alias gpsf='git push --force'
-alias gpl='git pull'
+
+# forgejo (ALB + Entra ID) の cookie 認証切れで push/pull が 401 になったとき、
+# Shepherd 経由で再ログインしてリトライする。forgejo 以外のリポジトリでは素の git と同じ。
+_git_forgejo_retry() {
+  git "$@"
+  local rc=$?
+  (( rc == 0 )) && return 0
+  local shepherd="/Applications/Shepherd.app/Contents/Resources/cli/shepherd"
+  [[ -x "$shepherd" ]] || return $rc
+  git remote -v 2>/dev/null | grep -q 'forgejo\.sys\.corp-lx\.com' || return $rc
+  local st
+  st=$("$shepherd" mcp call forgejo_auth_status 2>/dev/null) || return $rc
+  [[ "$st" == *'"cookiesValid": true'* ]] && return $rc
+  echo "forgejo の認証が切れています。再ログインします (ブラウザが開きます)..."
+  "$shepherd" mcp call forgejo_auth_login >/dev/null || return $rc
+  git "$@"
+}
+alias gps='_git_forgejo_retry push'
+alias gpsf='_git_forgejo_retry push --force'
+alias gpl='_git_forgejo_retry pull'
 alias gcm='git checkout master || git checkout main'
 alias gcd='git checkout develop'
 alias gcs='git checkout staging'
@@ -157,3 +174,25 @@ export NPM_CONFIG_PREFIX="${XDG_DATA_HOME:-$HOME/.local/share}/npm-global"
 export PATH=$NPM_CONFIG_PREFIX/bin:$PATH
 export PATH="/usr/local/opt/mysql-client/bin:$PATH"
 export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
+
+# Claude Code: `claude --settings <name>` を ~/.claude/profiles/<name>.json に解決する
+# (ANTHROPIC_BASE_URL 等は settings の env では効かないため、プロファイルの env をプロセス環境にも渡す)
+claude() {
+  local args=() envs=() a v p
+  while (( $# )); do
+    a=$1; shift
+    p=
+    if [[ $a == --settings && $# -gt 0 && -f ~/.claude/profiles/$1.json ]]; then
+      p=~/.claude/profiles/$1.json; shift
+    elif [[ $a == --settings=* ]] && v=${a#*=} && [[ -f ~/.claude/profiles/$v.json ]]; then
+      p=~/.claude/profiles/$v.json
+    fi
+    if [[ -n $p ]]; then
+      args+=(--settings $p)
+      envs+=("${(@f)$(python3 -c 'import json,sys;[print(f"{k}={v}") for k,v in json.load(open(sys.argv[1])).get("env",{}).items()]' $p)}")
+    else
+      args+=("$a")
+    fi
+  done
+  env "${envs[@]}" claude "${args[@]}"
+}
